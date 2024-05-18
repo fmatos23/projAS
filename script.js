@@ -188,15 +188,10 @@ document.getElementById("instrumentFilter").addEventListener("change", function(
 document.getElementById("applyFiltersBtn").addEventListener("click", applyFilters);
 
 function toggleFilters() {
-    var filterButton = document.getElementById("filterButton");
-    var instrumentBar = document.getElementById("instrumentBar");
-    
-    if (instrumentBar.style.display === "none" || !instrumentBar.style.display) {
-        instrumentBar.style.display = "block";
-        filterButton.textContent = "Close Filters";
+    var searchFilters = document.querySelector('.search-filters');
+    if (searchFilters.style.display === 'none' || !searchFilters.style.display) {
+        searchFilters.style.display = 'flex'; // Show the search filters
     } else {
-        instrumentBar.style.display = "none";
-        filterButton.textContent = "Filters";
+        searchFilters.style.display = 'none'; // Hide the search filters
     }
 }
-
