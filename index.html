@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Allegro</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <h1>Allegro</h1>
+    <h1><img src="logo2.png" alt="Allegro Logo"></h1>
 
     <div class="topnav">
         <button onclick="openTab(event, 'viewOffers')" class="tablinks">View Offers</button>
@@ -32,6 +33,12 @@
             <button onclick="filterByInstrument('Accordion')" class="filter-button">Accordion</button>
             <button onclick="filterByInstrument('Banjo')" class="filter-button">Banjo</button>
             <button onclick="filterByInstrument('Xylophone')" class="filter-button">Xylophone</button>
+            <button id="toggleFiltersBtn" class="toggle-filters-button" onclick="toggleFilters()">
+            <i class="fas fa-filter"></i>
+            </button>
+            
+
+
         </div>
         <div class="search-filters">
             <label for="priceFilter">Max Price (€):</label>
