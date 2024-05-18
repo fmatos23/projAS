@@ -1,4 +1,3 @@
-/* No changes, remains the same */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -25,6 +24,7 @@ h1 {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
 }
 
 .topnav .tablinks {
@@ -35,47 +35,22 @@ h1 {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
-}
-
-.topnav .login-button {
-    position: absolute;
-    right: 0;
-    display: block;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-    background-color: #000000;
-    border: none;
-    cursor: pointer;
-}
-
-.topnav button {
-    float: left;
-    display: block;
-    color: #333;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
     border-radius: 5px;
 }
 
-.topnav button:hover {
+.topnav .tablinks:hover {
     background-color: rgba(51, 51, 51, 0.1);
 }
 
-.topnav::after {
-    content: "";
-    clear: both;
-    display: table;
+.topnav .login-button {
+    position: absolute;
+    right: 0;
+    background-color: #000000;
+    color: #f2f2f2;
 }
-
-
 
 .tab {
     display: none;
@@ -86,14 +61,35 @@ h1 {
     margin-bottom: 20px;
 }
 
-
 .tab.active {
     display: block;
 }
 
-form {
-    max-width: 400px;
-    margin: 0 auto;
+.instrument-filter {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.filter-button {
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+    background-color: #ccc;
+}
+
+.search-filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 label {
@@ -102,16 +98,8 @@ label {
     font-weight: bold;
 }
 
-input[type="text"],
+input[type="number"],
 textarea,
-input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
 select {
     width: 100%;
     padding: 10px;
@@ -212,7 +200,6 @@ button[type="submit"]:hover {
     display: block;
 }
 
-/* Styles for the back button */
 .back-button {
     display: inline-block;
     margin-bottom: 20px;
@@ -229,7 +216,6 @@ button[type="submit"]:hover {
     background-color: #333;
 }
 
-/* Existing styles for login and register forms */
 .login-container, .register-container {
     max-width: 400px;
     margin: auto;
@@ -267,4 +253,31 @@ button[type="submit"]:hover {
 .login-container button:hover, .register-container button:hover {
     background-color: #0b410d;
 }
+.instrument-bar {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    background-color: rgba(244, 244, 244, 0.8);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+}
 
+.instrument-bar button {
+    display: inline-block;
+    color: #333;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+}
+
+.instrument-bar button:hover {
+    background-color: rgba(51, 51, 51, 0.1);
+}

@@ -19,13 +19,36 @@
             margin-bottom: 20px;
         }
 
-        .payment-form {
+        .payment-methods, .payment-form {
             max-width: 400px;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-methods button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .payment-methods button:hover {
+            background-color: #45a049;
+        }
+
+        .payment-methods img {
+            height: 20px;
+            margin-right: 10px;
         }
 
         label {
@@ -43,7 +66,7 @@
             border-radius: 5px;
         }
 
-        button[type="submit"] {
+        .payment-form button {
             background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
@@ -52,41 +75,76 @@
             cursor: pointer;
         }
 
-        button[type="submit"]:hover {
+        .payment-form button:hover {
             background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <h1>Payment Details</h1>
+    <h1>Payment Methods</h1>
 
-    <div class="payment-form">
-        <form id="paymentForm">
-            <label for="cardNumber">Card Number:</label>
-            <input type="text" id="cardNumber" name="cardNumber" required><br>
-            <label for="expiryDate">Expiry Date:</label>
-            <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required><br>
-            <label for="cvv">CVV:</label>
-            <input type="text" id="cvv" name="cvv" required><br>
-            <label for="loanDuration">Loan Duration (weeks):</label>
-            <input type="number" id="loanDuration" name="loanDuration" required><br>
-            <input type="hidden" id="instrument" name="instrument">
-            <input type="hidden" id="price" name="price">
-            <input type="hidden" id="size" name="size">
-            <input type="hidden" id="material" name="material">
-            <input type="hidden" id="notes" name="notes">
+    <div class="payment-methods" id="paymentMethods">
+        <button onclick="selectPaymentMethod('Credit Card')">
+            <img src="https://via.placeholder.com/20x20.png?text=C" alt="Credit Card">
+            Credit Card
+        </button>
+        <button onclick="selectPaymentMethod('PayPal')">
+            <img src="https://via.placeholder.com/20x20.png?text=P" alt="PayPal">
+            PayPal
+        </button>
+        <button onclick="selectPaymentMethod('Bank Transfer')">
+            <img src="https://via.placeholder.com/20x20.png?text=B" alt="Bank Transfer">
+            Bank Transfer
+        </button>
+    </div>
+
+    <div class="payment-form" id="paymentForm" style="display: none;">
+        <form id="detailsForm">
+            <div id="formContent"></div>
             <button type="submit">Pay</button>
         </form>
     </div>
 
     <script>
-        
-        document.getElementById("paymentForm").addEventListener("submit", function(event) {
+        function selectPaymentMethod(method) {
+            document.getElementById("paymentMethods").style.display = "none";
+            document.getElementById("paymentForm").style.display = "block";
+            const formContent = document.getElementById("formContent");
+            
+            switch (method) {
+                case 'Credit Card':
+                    formContent.innerHTML = `
+                        <label for="cardNumber">Card Number:</label>
+                        <input type="text" id="cardNumber" name="cardNumber" required><br>
+                        <label for="expiryDate">Expiry Date:</label>
+                        <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YY" required><br>
+                        <label for="cvv">CVV:</label>
+                        <input type="text" id="cvv" name="cvv" required><br>
+                    `;
+                    break;
+                case 'PayPal':
+                    formContent.innerHTML = `
+                        <label for="paypalEmail">PayPal Email:</label>
+                        <input type="text" id="paypalEmail" name="paypalEmail" required><br>
+                    `;
+                    break;
+                case 'Bank Transfer':
+                    formContent.innerHTML = `
+                        <label for="accountNumber">Account Number:</label>
+                        <input type="text" id="accountNumber" name="accountNumber" required><br>
+                        <label for="bankName">Bank Name:</label>
+                        <input type="text" id="bankName" name="bankName" required><br>
+                    `;
+                    break;
+            }
+        }
+
+        document.getElementById("detailsForm").addEventListener("submit", function(event) {
             event.preventDefault();
             
             setTimeout(function() {
                 alert("Payment successful!");
-                
+                localStorage.setItem('paymentSuccessful', 'true');
                 window.close();
             }, 2000);
         });

@@ -111,10 +111,92 @@ function loanOffer(index) {
     }
 }
 
-
 function loanOfferModal() {
     var modal = document.getElementById("detailsModal");
     modal.style.display = "none";
     var index = offers.length - 1;
     loanOffer(index);
 }
+
+// Filter offers by instrument type
+function filterByInstrument(instrument) {
+    var filteredOffers = offers.filter(function(offer) {
+        return offer.instrument === instrument;
+    });
+    displayFilteredOffers(filteredOffers);
+}
+
+// Apply additional filters for price, size, and material
+function applyFilters() {
+    var maxPrice = parseFloat(document.getElementById("priceFilter").value);
+    var size = document.getElementById("sizeFilter").value;
+    var material = document.getElementById("materialFilter").value;
+
+    var filteredOffers = offers.filter(function(offer) {
+        var passesPriceFilter = !maxPrice || parseFloat(offer.price) <= maxPrice;
+        var passesSizeFilter = !size || offer.size === size;
+        var passesMaterialFilter = !material || offer.material === material;
+        return passesPriceFilter && passesSizeFilter && passesMaterialFilter;
+    });
+
+    displayFilteredOffers(filteredOffers);
+}
+
+// Display filtered offers in the offer list
+function displayFilteredOffers(filteredOffers) {
+    var offerList = document.getElementById("offerList");
+    offerList.innerHTML = ""; // Clear existing offers
+
+    filteredOffers.forEach(function(offer) {
+        var div = document.createElement("div");
+        div.classList.add("offer");
+
+        var img = document.createElement("img");
+        img.src = offer.image;
+        div.appendChild(img);
+
+        var name = document.createElement("p");
+        name.textContent = offer.instrument;
+        div.appendChild(name);
+
+        var priceElem = document.createElement("p");
+        priceElem.textContent = "$" + offer.price;
+        div.appendChild(priceElem);
+
+        var loanButton = document.createElement("button");
+        loanButton.textContent = "Loan";
+        loanButton.className = "loan-button";
+        loanButton.onclick = function() {
+            loanOffer(offers.indexOf(offer));
+        };
+        div.appendChild(loanButton);
+
+        offerList.appendChild(div);
+    });
+}
+
+// Event listeners for filter inputs
+document.getElementById("instrumentFilter").addEventListener("change", function() {
+    var selectedInstrument = this.value;
+    if (selectedInstrument === "All") {
+        displayFilteredOffers(offers);
+    } else {
+        filterByInstrument(selectedInstrument);
+    }
+});
+
+document.getElementById("applyFiltersBtn").addEventListener("click", applyFilters);
+
+function toggleFilters() {
+    var filterButton = document.getElementById("filterButton");
+    var instrumentBar = document.getElementById("instrumentBar");
+    
+    if (instrumentBar.style.display === "none" || !instrumentBar.style.display) {
+        instrumentBar.style.display = "block";
+        filterButton.textContent = "Close Filters";
+    } else {
+        instrumentBar.style.display = "none";
+        filterButton.textContent = "Filters";
+    }
+}
+

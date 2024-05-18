@@ -16,7 +16,42 @@
     </div>
 
     <div id="viewOffers" class="tab active">
-        <h2>Offers of Musical Instruments for Loan</h2>
+        <div class="instrument-filter">
+            <button onclick="filterByInstrument('Guitar')" class="filter-button">Guitar</button>
+            <button onclick="filterByInstrument('Piano')" class="filter-button">Piano</button>
+            <button onclick="filterByInstrument('Violin')" class="filter-button">Violin</button>
+            <button onclick="filterByInstrument('Drums')" class="filter-button">Drums</button>
+            <button onclick="filterByInstrument('Flute')" class="filter-button">Flute</button>
+            <button onclick="filterByInstrument('Saxophone')" class="filter-button">Saxophone</button>
+            <button onclick="filterByInstrument('Trumpet')" class="filter-button">Trumpet</button>
+            <button onclick="filterByInstrument('Cello')" class="filter-button">Cello</button>
+            <button onclick="filterByInstrument('Clarinet')" class="filter-button">Clarinet</button>
+            <button onclick="filterByInstrument('Trombone')" class="filter-button">Trombone</button>
+            <button onclick="filterByInstrument('Harp')" class="filter-button">Harp</button>
+            <button onclick="filterByInstrument('Accordion')" class="filter-button">Accordion</button>
+            <button onclick="filterByInstrument('Banjo')" class="filter-button">Banjo</button>
+            <button onclick="filterByInstrument('Xylophone')" class="filter-button">Xylophone</button>
+        </div>
+        <div class="search-filters">
+            <label for="priceFilter">Max Price (€):</label>
+            <input type="number" id="priceFilter" name="priceFilter" min="0" oninput="applyFilters()">
+            <label for="sizeFilter">Size:</label>
+            <select id="sizeFilter" name="sizeFilter" onchange="applyFilters()">
+                <option value="">All Sizes</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+            </select>
+            <label for="materialFilter">Material:</label>
+            <select id="materialFilter" name="materialFilter" onchange="applyFilters()">
+                <option value="">All Materials</option>
+                <option value="Wood">Wood</option>
+                <option value="Metal">Metal</option>
+                <option value="Leather">Leather</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
         <div id="offerList">
             <!-- Offers will be dynamically populated here -->
         </div>
@@ -44,19 +79,38 @@
                 <option value="Xylophone">Xylophone</option>
             </select><br>
             <label for="size">Size:</label>
-            <input type="text" id="size" name="size" required><br>
+            <select id="size" name="size" required>
+                <option value="">Select a Size</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+            </select><br>
             <label for="material">Material:</label>
-            <input type="text" id="material" name="material" required><br>
+            <select id="material" name="material" required>
+                <option value="">Select a Material</option>
+                <option value="Wood">Wood</option>
+                <option value="Metal">Metal</option>
+                <option value="Leather">Leather</option>
+                <option value="Other">Other</option>
+            </select><br>
             <label for="notes">Notes:</label><br>
             <textarea id="notes" name="notes" rows="4" required></textarea><br>
-            <label for="price">Price:</label>
-            <input type="text" id="price" name="price" required><br>
-            <label for="loanDuration">Loan Duration (weeks):</label>
-            <input type="number" id="loanDuration" name="loanDuration" required><br>
+            <label for="price">Price (€):</label>
+            <input type="number" id="price" name="price" min="0" required><br>
+            <label for="loanDuration">Loan Duration (days):</label>
+            <input type="number" id="loanDuration" name="loanDuration" min="0" required><br>
             <label for="image">Image:</label>
             <input type="file" id="image" name="image" accept="image/*" required><br>
             <button type="submit">Create Offer</button>
         </form>
+    </div>
+    
+    <div id="profileTab" class="tab">
+        <h2>Profile</h2>
+        <button onclick="openMyOffers()">My Offers</button>
+        <button onclick="openMyLoans()">My Loans</button>
+        <button onclick="logout()">Logout</button>
     </div>
 
     <div id="detailsModal" class="details-modal">
@@ -72,8 +126,6 @@
         <h2>Payment Successful!</h2>
         <p>Thank you for your payment.</p>
     </div>
-
-    
 
     <script src="script.js"></script>
 </body>
