@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <h1><img src="logo2.png" alt="Allegro Logo"></h1>
+    <div class="logo-container">
+        <img src="logo2.png" alt="Allegro Logo" class="logo">
+    </div>
 
     <div class="topnav">
         <button onclick="openTab(event, 'viewOffers')" class="tablinks">View Offers</button>
@@ -34,11 +36,8 @@
             <button onclick="filterByInstrument('Banjo')" class="filter-button">Banjo</button>
             <button onclick="filterByInstrument('Xylophone')" class="filter-button">Xylophone</button>
             <button id="toggleFiltersBtn" class="toggle-filters-button" onclick="toggleFilters()">
-            <i class="fas fa-filter"></i>
+                <i class="fas fa-filter"></i>
             </button>
-            
-
-
         </div>
         <div class="search-filters">
             <label for="priceFilter">Max Price (€):</label>

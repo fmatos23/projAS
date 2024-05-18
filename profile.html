@@ -10,6 +10,8 @@
     <h1>User Profile</h1>
     <div class="profile-container">
         <div id="profileInfo"></div>
+        <h2>Your Offers</h2>
+        <div id="userOffers"></div>
         <button onclick="goHome()">Back to Home</button>
         <button onclick="logout()">Logout</button>
     </div>
@@ -24,10 +26,40 @@
                     <p>Email: ${profile.email}</p>
                     <p>Phone: ${profile.phone}</p>
                 `;
+                loadUserOffers(profile.email);
             } else {
                 alert('No profile found. Redirecting to login.');
                 window.location.href = 'login.html';
             }
+        }
+
+        function loadUserOffers(email) {
+            const offers = JSON.parse(localStorage.getItem('offers')) || [];
+            const userOffers = offers.filter(offer => offer.email === email);
+            const userOffersContainer = document.getElementById('userOffers');
+            userOffersContainer.innerHTML = '';
+            userOffers.forEach((offer, index) => {
+                const offerElement = document.createElement('div');
+                offerElement.className = 'offer';
+                offerElement.innerHTML = `
+                    <h3>${offer.instrument}</h3>
+                    <p>Size: ${offer.size}</p>
+                    <p>Material: ${offer.material}</p>
+                    <p>Notes: ${offer.notes}</p>
+                    <p>Price: €${offer.price}</p>
+                    <p>Loan Duration: ${offer.loanDuration} days</p>
+                    <p>Posted by: ${offer.postedBy}</p>
+                    <button onclick="cancelOffer(${index})">Cancel Offer</button>
+                `;
+                userOffersContainer.appendChild(offerElement);
+            });
+        }
+
+        function cancelOffer(index) {
+            let offers = JSON.parse(localStorage.getItem('offers')) || [];
+            offers.splice(index, 1);
+            localStorage.setItem('offers', JSON.stringify(offers));
+            loadProfile(); // Reload profile to update the offers list
         }
 
         function goHome() {

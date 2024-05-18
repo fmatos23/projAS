@@ -11,53 +11,60 @@ function openTab(evt, tabName) {
 
 document.getElementById("offerForm").addEventListener("submit", function(event) {
     event.preventDefault();
-    var instrument = document.getElementById("instrument").value;
-    var size = document.getElementById("size").value;
-    var material = document.getElementById("material").value;
-    var notes = document.getElementById("notes").value;
-    var price = document.getElementById("price").value;
-    var loanDuration = document.getElementById("loanDuration").value;
-    var image = document.getElementById("image").files[0];
-    var offerList = document.getElementById("offerList");
 
-    var div = document.createElement("div");
-    div.classList.add("offer");
+    const storedProfile = JSON.parse(localStorage.getItem('userProfile'));
+    if (!storedProfile) {
+        alert('You must be logged in to create an offer.');
+        return;
+    }
 
-    var img = document.createElement("img");
-    img.src = URL.createObjectURL(image);
-    div.addEventListener("click", function() {
-        openModal(instrument, size, material, notes, price, loanDuration, img.src);
-    });
-    div.appendChild(img);
+    const instrument = document.getElementById("instrument").value;
+    const size = document.getElementById("size").value;
+    const material = document.getElementById("material").value;
+    const notes = document.getElementById("notes").value;
+    const price = document.getElementById("price").value;
+    const loanDuration = document.getElementById("loanDuration").value;
+    const image = document.getElementById("image").files[0];
+    const offerList = document.getElementById("offerList");
 
-    var name = document.createElement("p");
-    name.textContent = instrument;
-    div.appendChild(name);
-
-    var priceElem = document.createElement("p");
-    priceElem.textContent = "$" + price;
-    div.appendChild(priceElem);
-
-    var loanButton = document.createElement("button");
-    loanButton.textContent = "Loan";
-    loanButton.className = "loan-button";
-    loanButton.onclick = function() {
-        loanOffer(offers.length - 1);
-    };
-    div.appendChild(loanButton);
-
-    var newOffer = {
+    const newOffer = {
         instrument: instrument,
         size: size,
         material: material,
         notes: notes,
         price: price,
         loanDuration: loanDuration,
-        image: img.src,
-        status: "available"
+        image: URL.createObjectURL(image),
+        status: "available",
+        postedBy: `${storedProfile.firstName} ${storedProfile.lastName}`,
+        email: storedProfile.email
     };
 
     offers.push(newOffer);
+    saveOffers();
+
+    const div = document.createElement("div");
+    div.classList.add("offer");
+
+    const img = document.createElement("img");
+    img.src = newOffer.image;
+    div.appendChild(img);
+
+    const name = document.createElement("p");
+    name.textContent = instrument;
+    div.appendChild(name);
+
+    const priceElem = document.createElement("p");
+    priceElem.textContent = "€" + price;
+    div.appendChild(priceElem);
+
+    const loanButton = document.createElement("button");
+    loanButton.textContent = "Loan";
+    loanButton.className = "loan-button";
+    loanButton.onclick = function() {
+        loanOffer(offers.length - 1);
+    };
+    div.appendChild(loanButton);
 
     offerList.appendChild(div);
 
@@ -73,38 +80,39 @@ document.getElementById("offerForm").addEventListener("submit", function(event) 
 });
 
 function openModal(instrument, size, material, notes, price, loanDuration, image) {
-    var modal = document.getElementById("detailsModal");
-    var detailsContent = document.getElementById("detailsContent");
+    const modal = document.getElementById("detailsModal");
+    const detailsContent = document.getElementById("detailsContent");
     detailsContent.innerHTML = `
         <img src="${image}" style="max-width: 200px;">
         <p><strong>Instrument:</strong> ${instrument}</p>
         <p><strong>Size:</strong> ${size}</p>
         <p><strong>Material:</strong> ${material}</p>
         <p><strong>Notes:</strong> ${notes}</p>
-        <p><strong>Price:</strong> $${price}</p>
+        <p><strong>Price:</strong> €${price}</p>
         <p><strong>Loan Duration (weeks):</strong> ${loanDuration}</p>
     `;
     modal.style.display = "block";
-    var loanButtonModal = document.getElementById("loanButtonModal");
+    const loanButtonModal = document.getElementById("loanButtonModal");
     loanButtonModal.onclick = function() {
         loanOfferModal();
     };
 }
 
 function closeModal() {
-    var modal = document.getElementById("detailsModal");
+    const modal = document.getElementById("detailsModal");
     modal.style.display = "none";
 }
 
 function openPaymentTab() {
-    var paymentWindow = window.open("payment.html", "_blank");
+    window.open("payment.html", "_blank");
 }
 
 function loanOffer(index) {
     if (offers[index].status === "available") {
         offers[index].status = "loaned";
-        var offer = document.getElementById("offerList").children[index];
-        var loanButton = offer.querySelector(".loan-button");
+        saveOffers();
+        const offer = document.getElementById("offerList").children[index];
+        const loanButton = offer.querySelector(".loan-button");
         loanButton.disabled = true;
         loanButton.textContent = "Loaned";
         openPaymentTab();
@@ -112,58 +120,52 @@ function loanOffer(index) {
 }
 
 function loanOfferModal() {
-    var modal = document.getElementById("detailsModal");
-    modal.style.display = "none";
-    var index = offers.length - 1;
+    closeModal();
+    const index = offers.length - 1;
     loanOffer(index);
 }
 
-// Filter offers by instrument type
 function filterByInstrument(instrument) {
-    var filteredOffers = offers.filter(function(offer) {
-        return offer.instrument === instrument;
-    });
+    const filteredOffers = offers.filter(offer => offer.instrument === instrument);
     displayFilteredOffers(filteredOffers);
 }
 
-// Apply additional filters for price, size, and material
 function applyFilters() {
-    var maxPrice = parseFloat(document.getElementById("priceFilter").value);
-    var size = document.getElementById("sizeFilter").value;
-    var material = document.getElementById("materialFilter").value;
+    const maxPrice = parseFloat(document.getElementById("priceFilter").value);
+    const size = document.getElementById("sizeFilter").value;
+    const material = document.getElementById("materialFilter").value;
 
-    var filteredOffers = offers.filter(function(offer) {
-        var passesPriceFilter = !maxPrice || parseFloat(offer.price) <= maxPrice;
-        var passesSizeFilter = !size || offer.size === size;
-        var passesMaterialFilter = !material || offer.material === material;
+    const filteredOffers = offers.filter(offer => {
+        const passesPriceFilter = !maxPrice || parseFloat(offer.price) <= maxPrice;
+        const passesSizeFilter = !size || offer.size === size;
+        const passesMaterialFilter = !material || offer.material === material;
         return passesPriceFilter && passesSizeFilter && passesMaterialFilter;
     });
 
     displayFilteredOffers(filteredOffers);
 }
 
-// Display filtered offers in the offer list
 function displayFilteredOffers(filteredOffers) {
-    var offerList = document.getElementById("offerList");
-    offerList.innerHTML = ""; // Clear existing offers
+    const offerList = document.getElementById("offerList");
+    offerList.innerHTML = "";
 
-    filteredOffers.forEach(function(offer) {
-        var div = document.createElement("div");
+    filteredOffers.forEach(offer => {
+        const div = document.createElement("div");
         div.classList.add("offer");
 
-        var img = document.createElement("img");
+        const img = document.createElement("img");
         img.src = offer.image;
         div.appendChild(img);
 
-        var name = document.createElement("p");
+        const name = document.createElement("p");
         name.textContent = offer.instrument;
         div.appendChild(name);
 
-        var priceElem = document.createElement("p");
-        priceElem.textContent = "$" + offer.price;
+        const priceElem = document.createElement("p");
+        priceElem.textContent = "€" + offer.price;
         div.appendChild(priceElem);
 
-        var loanButton = document.createElement("button");
+        const loanButton = document.createElement("button");
         loanButton.textContent = "Loan";
         loanButton.className = "loan-button";
         loanButton.onclick = function() {
@@ -175,9 +177,8 @@ function displayFilteredOffers(filteredOffers) {
     });
 }
 
-// Event listeners for filter inputs
 document.getElementById("instrumentFilter").addEventListener("change", function() {
-    var selectedInstrument = this.value;
+    const selectedInstrument = this.value;
     if (selectedInstrument === "All") {
         displayFilteredOffers(offers);
     } else {
@@ -188,16 +189,13 @@ document.getElementById("instrumentFilter").addEventListener("change", function(
 document.getElementById("applyFiltersBtn").addEventListener("click", applyFilters);
 
 function toggleFilters() {
-    var searchFilters = document.querySelector('.search-filters');
+    const searchFilters = document.querySelector('.search-filters');
     if (searchFilters.style.display === 'none' || !searchFilters.style.display) {
-        searchFilters.style.display = 'flex'; // Show the search filters
+        searchFilters.style.display = 'flex';
     } else {
-        searchFilters.style.display = 'none'; // Hide the search filters
+        searchFilters.style.display = 'none';
     }
-<<<<<<< HEAD
 }
-
-
 
 function goBack() {
     window.location.href = 'index.html';
@@ -241,35 +239,16 @@ document.getElementById('registerForm').addEventListener('submit', function(even
     window.location.href = 'login.html';
 });
 
-document.getElementById('offerForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+function loadOffers() {
+    offers = JSON.parse(localStorage.getItem('offers')) || [];
+}
 
-    const storedProfile = JSON.parse(localStorage.getItem('userProfile'));
-    if (!storedProfile) {
-        alert('You must be logged in to create an offer.');
-        return;
-    }
-
-    const offer = {
-        instrument: document.getElementById('instrument').value,
-        size: document.getElementById('size').value,
-        material: document.getElementById('material').value,
-        notes: document.getElementById('notes').value,
-        price: document.getElementById('price').value,
-        loanDuration: document.getElementById('loanDuration').value,
-        image: document.getElementById('image').files[0].name, // Assuming file name for simplicity
-        postedBy: `${storedProfile.firstName} ${storedProfile.lastName}`
-    };
-
-    let offers = JSON.parse(localStorage.getItem('offers')) || [];
-    offers.push(offer);
+function saveOffers() {
     localStorage.setItem('offers', JSON.stringify(offers));
-    alert('Offer created successfully!');
-    window.location.href = 'index.html';
-});
+}
 
 window.onload = function() {
-    const offers = JSON.parse(localStorage.getItem('offers')) || [];
+    loadOffers();
     const offerList = document.getElementById('offerList');
 
     offers.forEach(offer => {
@@ -287,6 +266,3 @@ window.onload = function() {
         offerList.appendChild(offerElement);
     });
 };
-=======
-}
->>>>>>> 83995c3b7c0657a798eac820560ad9ccb5044bb7
