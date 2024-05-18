@@ -13,6 +13,7 @@
         <button onclick="openTab(event, 'viewOffers')" class="tablinks">View Offers</button>
         <button onclick="openTab(event, 'createOffer')" class="tablinks">Create Offer</button>
         <button onclick="location.href='login.html'" class="tablinks login-button">Login</button>
+        <button onclick="location.href='profile.html'" class="tablinks profile-button">Profile</button>
     </div>
 
     <div id="viewOffers" class="tab active">
@@ -102,10 +103,11 @@
             <input type="number" id="loanDuration" name="loanDuration" min="0" required><br>
             <label for="image">Image:</label>
             <input type="file" id="image" name="image" accept="image/*" required><br>
+            <input type="hidden" id="postedBy" name="postedBy"><!-- Hidden field for user name -->
             <button type="submit">Create Offer</button>
         </form>
     </div>
-    
+
     <div id="detailsModal" class="details-modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>

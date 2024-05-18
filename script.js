@@ -200,3 +200,93 @@ function toggleFilters() {
     }
 }
 
+
+
+function goBack() {
+    window.location.href = 'index.html';
+}
+
+function goHome() {
+    window.location.href = 'index.html';
+}
+
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const storedProfile = JSON.parse(localStorage.getItem('userProfile'));
+    if (storedProfile && storedProfile.email === email && storedProfile.password === password) {
+        alert('Login successful!');
+        window.location.href = 'index.html';
+    } else {
+        alert('Invalid email or password!');
+    }
+});
+
+document.getElementById('registerForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const firstName = document.getElementById('registerFirstName').value;
+    const lastName = document.getElementById('registerLastName').value;
+    const email = document.getElementById('registerEmail').value;
+    const phone = document.getElementById('registerPhone').value;
+    const password = document.getElementById('registerPassword').value;
+
+    const profile = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone,
+        password: password
+    };
+    localStorage.setItem('userProfile', JSON.stringify(profile));
+    alert('Profile created successfully!');
+    window.location.href = 'login.html';
+});
+
+document.getElementById('offerForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const storedProfile = JSON.parse(localStorage.getItem('userProfile'));
+    if (!storedProfile) {
+        alert('You must be logged in to create an offer.');
+        return;
+    }
+
+    const offer = {
+        instrument: document.getElementById('instrument').value,
+        size: document.getElementById('size').value,
+        material: document.getElementById('material').value,
+        notes: document.getElementById('notes').value,
+        price: document.getElementById('price').value,
+        loanDuration: document.getElementById('loanDuration').value,
+        image: document.getElementById('image').files[0].name, // Assuming file name for simplicity
+        postedBy: `${storedProfile.firstName} ${storedProfile.lastName}`
+    };
+
+    let offers = JSON.parse(localStorage.getItem('offers')) || [];
+    offers.push(offer);
+    localStorage.setItem('offers', JSON.stringify(offers));
+    alert('Offer created successfully!');
+    window.location.href = 'index.html';
+});
+
+window.onload = function() {
+    const offers = JSON.parse(localStorage.getItem('offers')) || [];
+    const offerList = document.getElementById('offerList');
+
+    offers.forEach(offer => {
+        const offerElement = document.createElement('div');
+        offerElement.className = 'offer';
+        offerElement.innerHTML = `
+            <h3>${offer.instrument}</h3>
+            <p>Size: ${offer.size}</p>
+            <p>Material: ${offer.material}</p>
+            <p>Notes: ${offer.notes}</p>
+            <p>Price: €${offer.price}</p>
+            <p>Loan Duration: ${offer.loanDuration} days</p>
+            <p>Posted by: ${offer.postedBy}</p>
+        `;
+        offerList.appendChild(offerElement);
+    });
+};

@@ -23,8 +23,22 @@
     <script src="script.js"></script>
     <script>
         function goBack() {
-            window.location.href = 'index.html'; // Substitua 'index.html' pela URL da página principal do seu site, se diferente
+            window.location.href = 'index.html';
         }
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const storedProfile = JSON.parse(localStorage.getItem('userProfile'));
+            if (storedProfile && storedProfile.email === email && storedProfile.password === password) {
+                alert('Login successful!');
+                window.location.href = 'index.html';
+            } else {
+                alert('Invalid email or password!');
+            }
+        });
     </script>
 </body>
 </html>
