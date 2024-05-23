@@ -7,13 +7,20 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <h1>User Profile</h1>
-    <div class="profile-container">
-        <div id="profileInfo"></div>
-        <h2>Your Offers</h2>
-        <div id="userOffers"></div>
-        <button onclick="goHome()">Back to Home</button>
-        <button onclick="logout()">Logout</button>
+    <div class="container">
+        <h1>User Profile</h1>
+        <div class="profile-container">
+            <div id="profileInfo" class="profile-info"></div>
+            <div class="profile-picture">
+                <h3>Profile Picture</h3>
+                <img id="profileImage" src="" alt="Profile Picture" class="profile-image">
+                <input type="file" id="profileImageInput" accept="image/*" onchange="uploadProfileImage(event)" class="upload-button">
+            </div>
+            <h2>Your Offers</h2>
+            <div id="userOffers" class="offers-container"></div>
+            <button onclick="goHome()" class="btn">Back to Home</button>
+            <button onclick="logout()" class="btn">Logout</button>
+        </div>
     </div>
 
     <script>
@@ -27,6 +34,7 @@
                     <p>Phone: ${profile.phone}</p>
                 `;
                 loadUserOffers(profile.email);
+                loadProfileImage();
             } else {
                 alert('No profile found. Redirecting to login.');
                 window.location.href = 'login.html';
@@ -49,7 +57,7 @@
                     <p>Price: €${offer.price}</p>
                     <p>Loan Duration: ${offer.loanDuration} days</p>
                     <p>Posted by: ${offer.postedBy}</p>
-                    <button onclick="cancelOffer(${index})">Cancel Offer</button>
+                    <button onclick="cancelOffer(${index})" class="btn cancel-btn">Cancel Offer</button>
                 `;
                 userOffersContainer.appendChild(offerElement);
             });
@@ -70,6 +78,23 @@
             localStorage.removeItem('userProfile');
             alert('Logged out successfully!');
             window.location.href = 'login.html';
+        }
+
+        function uploadProfileImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const profileImageData = reader.result;
+                localStorage.setItem('profileImage', profileImageData);
+                document.getElementById('profileImage').src = profileImageData;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function loadProfileImage() {
+            const profileImage = localStorage.getItem('profileImage');
+            if (profileImage) {
+                document.getElementById('profileImage').src = profileImage;
+            }
         }
 
         window.onload = loadProfile;
