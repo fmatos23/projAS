@@ -25,7 +25,6 @@ document.getElementById("offerForm").addEventListener("submit", function(event) 
     const price = document.getElementById("price").value;
     const loanDuration = document.getElementById("loanDuration").value;
     const image = document.getElementById("image").files[0];
-    const offerList = document.getElementById("offerList");
 
     const newOffer = {
         instrument: instrument,
@@ -42,40 +41,9 @@ document.getElementById("offerForm").addEventListener("submit", function(event) 
 
     offers.push(newOffer);
     saveOffers();
+    displayFilteredOffers(offers);
 
-    const div = document.createElement("div");
-    div.classList.add("offer");
-
-    const img = document.createElement("img");
-    img.src = newOffer.image;
-    div.appendChild(img);
-
-    const name = document.createElement("p");
-    name.textContent = instrument;
-    div.appendChild(name);
-
-    const priceElem = document.createElement("p");
-    priceElem.textContent = "€" + price;
-    div.appendChild(priceElem);
-
-    const loanButton = document.createElement("button");
-    loanButton.textContent = "Loan";
-    loanButton.className = "loan-button";
-    loanButton.onclick = function() {
-        loanOffer(offers.length - 1);
-    };
-    div.appendChild(loanButton);
-
-    offerList.appendChild(div);
-
-    document.getElementById("instrument").value = "";
-    document.getElementById("size").value = "";
-    document.getElementById("material").value = "";
-    document.getElementById("notes").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("loanDuration").value = "";
-    document.getElementById("image").value = "";
-
+    document.getElementById("offerForm").reset();
     openTab(event, 'viewOffers');
 });
 
@@ -149,7 +117,7 @@ function displayFilteredOffers(filteredOffers) {
     const offerList = document.getElementById("offerList");
     offerList.innerHTML = "";
 
-    filteredOffers.forEach(offer => {
+    filteredOffers.forEach((offer, index) => {
         const div = document.createElement("div");
         div.classList.add("offer");
 
@@ -166,10 +134,11 @@ function displayFilteredOffers(filteredOffers) {
         div.appendChild(priceElem);
 
         const loanButton = document.createElement("button");
-        loanButton.textContent = "Loan";
+        loanButton.textContent = offer.status === "available" ? "Loan" : "Loaned";
         loanButton.className = "loan-button";
+        loanButton.disabled = offer.status !== "available";
         loanButton.onclick = function() {
-            loanOffer(offers.indexOf(offer));
+            loanOffer(index);
         };
         div.appendChild(loanButton);
 
@@ -249,20 +218,5 @@ function saveOffers() {
 
 window.onload = function() {
     loadOffers();
-    const offerList = document.getElementById('offerList');
-
-    offers.forEach(offer => {
-        const offerElement = document.createElement('div');
-        offerElement.className = 'offer';
-        offerElement.innerHTML = `
-            <h3>${offer.instrument}</h3>
-            <p>Size: ${offer.size}</p>
-            <p>Material: ${offer.material}</p>
-            <p>Notes: ${offer.notes}</p>
-            <p>Price: €${offer.price}</p>
-            <p>Loan Duration: ${offer.loanDuration} days</p>
-            <p>Posted by: ${offer.postedBy}</p>
-        `;
-        offerList.appendChild(offerElement);
-    });
+    displayFilteredOffers(offers);
 };

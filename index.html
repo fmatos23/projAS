@@ -129,5 +129,12 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Load offers on window load
+        window.onload = function() {
+            loadOffers();
+            displayFilteredOffers(offers);
+        };
+    </script>
 </body>
 </html>
