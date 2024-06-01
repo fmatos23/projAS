@@ -18,27 +18,54 @@
             </div>
             <h2>Your Offers</h2>
             <div id="userOffers" class="offers-container"></div>
+            <h2>Loaned Offers</h2>
+            <div id="loanedOffersContainer" class="offers-container"></div>
             <button onclick="goHome()" class="btn">Back to Home</button>
             <button onclick="logout()" class="btn">Logout</button>
         </div>
+        </div>
+        
     </div>
 
     <script>
         function loadProfile() {
-            const profile = JSON.parse(localStorage.getItem('userProfile'));
-            if (profile) {
-                document.getElementById('profileInfo').innerHTML = `
-                    <p>First Name: ${profile.firstName}</p>
-                    <p>Last Name: ${profile.lastName}</p>
-                    <p>Email: ${profile.email}</p>
-                    <p>Phone: ${profile.phone}</p>
+    const profile = JSON.parse(localStorage.getItem('userProfile'));
+    if (profile) {
+        document.getElementById('profileInfo').innerHTML = `
+            <p>First Name: ${profile.firstName}</p>
+            <p>Last Name: ${profile.lastName}</p>
+            <p>Email: ${profile.email}</p>
+            <p>Phone: ${profile.phone}</p>
+        `;
+        loadUserOffers(profile.email);
+        loadLoanedOffers(profile.email); 
+        loadProfileImage();
+    } else {
+        alert('No profile found. Redirecting to login.');
+        window.location.href = 'login.html';
+    }
+}
+
+function loadLoanedOffers(email) {
+            const offers = JSON.parse(localStorage.getItem('offers')) || [];
+            const loanedOffers = offers.filter(offer => offer.status === 'loaned' && offer.email !== email);
+            const loanedOffersContainer = document.getElementById('loanedOffersContainer');
+            loanedOffersContainer.innerHTML = '';
+            loanedOffers.forEach((offer, index) => {
+                const offerElement = document.createElement('div');
+                offerElement.className = 'offer';
+                offerElement.innerHTML = `
+                    <h3>${offer.instrument}</h3>
+                    <p>Size: ${offer.size}</p>
+                    <p>Material: ${offer.material}</p>
+                    <p>Notes: ${offer.notes}</p>
+                    <p>Price: €${offer.price}</p>
+                    <p>Loan Duration: ${offer.loanDuration} days</p>
+                    <p>Loaned by: ${offer.postedBy}</p>
+                    <button onclick="returnOffer(${index})" class="btn return-btn">Return</button> <!-- Add return button -->
                 `;
-                loadUserOffers(profile.email);
-                loadProfileImage();
-            } else {
-                alert('No profile found. Redirecting to login.');
-                window.location.href = 'login.html';
-            }
+                loanedOffersContainer.appendChild(offerElement);
+            });
         }
 
         function loadUserOffers(email) {
@@ -61,6 +88,15 @@
                 `;
                 userOffersContainer.appendChild(offerElement);
             });
+        }
+        function returnOffer(index) {
+            const offers = JSON.parse(localStorage.getItem('offers')) || [];
+            if (offers[index].status === 'loaned') {
+                offers[index].status = 'available';
+                localStorage.setItem('offers', JSON.stringify(offers));
+                loadProfile(); 
+                alert('Instrument returned successfully!');
+            }
         }
 
         function cancelOffer(index) {
