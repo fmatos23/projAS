@@ -23,32 +23,30 @@
             <button onclick="goHome()" class="btn">Back to Home</button>
             <button onclick="logout()" class="btn">Logout</button>
         </div>
-        </div>
-        
     </div>
 
     <script>
         function loadProfile() {
-    const profile = JSON.parse(localStorage.getItem('userProfile'));
-    if (profile) {
-        document.getElementById('profileInfo').innerHTML = `
-            <p>First Name: ${profile.firstName}</p>
-            <p>Last Name: ${profile.lastName}</p>
-            <p>Email: ${profile.email}</p>
-            <p>Phone: ${profile.phone}</p>
-        `;
-        loadUserOffers(profile.email);
-        loadLoanedOffers(profile.email); 
-        loadProfileImage();
-    } else {
-        alert('No profile found. Redirecting to login.');
-        window.location.href = 'login.html';
-    }
-}
+            const profile = JSON.parse(localStorage.getItem('userProfile'));
+            if (profile) {
+                document.getElementById('profileInfo').innerHTML = `
+                    <p>First Name: ${profile.firstName}</p>
+                    <p>Last Name: ${profile.lastName}</p>
+                    <p>Email: ${profile.email}</p>
+                    <p>Phone: ${profile.phone}</p>
+                `;
+                loadUserOffers(profile.email);
+                loadLoanedOffers(profile.email);
+                loadProfileImage();
+            } else {
+                alert('No profile found. Redirecting to login.');
+                window.location.href = 'login.html';
+            }
+        }
 
-function loadLoanedOffers(email) {
+        function loadLoanedOffers(email) {
             const offers = JSON.parse(localStorage.getItem('offers')) || [];
-            const loanedOffers = offers.filter(offer => offer.status === 'loaned' && offer.email !== email);
+            const loanedOffers = offers.filter(offer => offer.status === 'loaned' && offer.loanedBy === email);
             const loanedOffersContainer = document.getElementById('loanedOffersContainer');
             loanedOffersContainer.innerHTML = '';
             loanedOffers.forEach((offer, index) => {
@@ -62,10 +60,21 @@ function loadLoanedOffers(email) {
                     <p>Price: €${offer.price}</p>
                     <p>Loan Duration: ${offer.loanDuration} days</p>
                     <p>Loaned by: ${offer.postedBy}</p>
-                    <button onclick="returnOffer(${index})" class="btn return-btn">Return</button> <!-- Add return button -->
+                    <button onclick="returnOffer(${index})" class="btn return-btn">Return</button>
                 `;
                 loanedOffersContainer.appendChild(offerElement);
             });
+        }
+
+        function returnOffer(index) {
+            const offers = JSON.parse(localStorage.getItem('offers')) || [];
+            if (offers[index].status === 'loaned') {
+                offers[index].status = 'available';
+                delete offers[index].loanedBy; // Remove the loanedBy field
+                localStorage.setItem('offers', JSON.stringify(offers));
+                loadProfile();
+                alert('Instrument returned successfully!');
+            }
         }
 
         function loadUserOffers(email) {
@@ -89,21 +98,12 @@ function loadLoanedOffers(email) {
                 userOffersContainer.appendChild(offerElement);
             });
         }
-        function returnOffer(index) {
-            const offers = JSON.parse(localStorage.getItem('offers')) || [];
-            if (offers[index].status === 'loaned') {
-                offers[index].status = 'available';
-                localStorage.setItem('offers', JSON.stringify(offers));
-                loadProfile(); 
-                alert('Instrument returned successfully!');
-            }
-        }
 
         function cancelOffer(index) {
             let offers = JSON.parse(localStorage.getItem('offers')) || [];
             offers.splice(index, 1);
             localStorage.setItem('offers', JSON.stringify(offers));
-            loadProfile(); // Reload profile to update the offers list
+            loadProfile();
         }
 
         function goHome() {
@@ -111,9 +111,13 @@ function loadLoanedOffers(email) {
         }
 
         function logout() {
-            localStorage.removeItem('userProfile');
-            alert('Logged out successfully!');
-            window.location.href = 'login.html';
+            const profile = JSON.parse(localStorage.getItem('userProfile'));
+            if (profile) {
+                sessionStorage.setItem('userProfile', JSON.stringify(profile));
+                localStorage.removeItem('userProfile');
+                alert('Logged out successfully!');
+                window.location.href = 'login.html';
+            }
         }
 
         function uploadProfileImage(event) {
@@ -137,3 +141,5 @@ function loadLoanedOffers(email) {
     </script>
 </body>
 </html>
+
+
