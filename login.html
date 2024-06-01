@@ -27,20 +27,21 @@
         }
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
 
-    const storedProfile = JSON.parse(sessionStorage.getItem('userProfile')) || JSON.parse(localStorage.getItem('userProfile'));
-    if (storedProfile && storedProfile.email === email && storedProfile.password === password) {
-        localStorage.setItem('userProfile', JSON.stringify(storedProfile)); 
-        alert('Login successful!');
-        sessionStorage.removeItem('userProfile'); 
-        window.location.href = 'index.html';
-    } else {
-        alert('Invalid email or password!');
-    }
-});
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(user => user.email === email && user.password === password);
+
+            if (user) {
+                localStorage.setItem('userProfile', JSON.stringify(user));
+                alert('Login successful!');
+                window.location.href = 'index.html';
+            } else {
+                alert('Invalid email or password!');
+            }
+        });
     </script>
 </body>
 </html>

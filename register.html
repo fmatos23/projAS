@@ -34,21 +34,26 @@
 
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault();
+
             const firstName = document.getElementById('registerFirstName').value;
             const lastName = document.getElementById('registerLastName').value;
             const email = document.getElementById('registerEmail').value;
-            const phone = document.getElementById('registerPhone').value;
             const password = document.getElementById('registerPassword').value;
+            const phone = document.getElementById('registerPhone').value;
 
-            const profile = {
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                phone: phone,
-                password: password
+            const newUser = {
+                firstName,
+                lastName,
+                email,
+                password,
+                phone
             };
-            localStorage.setItem('userProfile', JSON.stringify(profile));
-            alert('Profile created successfully!');
+
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('Registration successful!');
             window.location.href = 'login.html';
         });
     </script>

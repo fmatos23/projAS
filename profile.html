@@ -46,7 +46,7 @@
 
         function loadLoanedOffers(email) {
             const offers = JSON.parse(localStorage.getItem('offers')) || [];
-            const loanedOffers = offers.filter(offer => offer.status === 'loaned' && offer.loanedBy === email);
+            const loanedOffers = offers.filter(offer => offer.status === 'loaned' && offer.email !== email);
             const loanedOffersContainer = document.getElementById('loanedOffersContainer');
             loanedOffersContainer.innerHTML = '';
             loanedOffers.forEach((offer, index) => {
@@ -70,7 +70,7 @@
             const offers = JSON.parse(localStorage.getItem('offers')) || [];
             if (offers[index].status === 'loaned') {
                 offers[index].status = 'available';
-                delete offers[index].loanedBy; // Remove the loanedBy field
+                delete offers[index].loanedBy;
                 localStorage.setItem('offers', JSON.stringify(offers));
                 loadProfile();
                 alert('Instrument returned successfully!');
