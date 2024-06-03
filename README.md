@@ -9,6 +9,6 @@ Pedro Sugiyama - 101094
 
 Luís Pereira - 108770
 
-Repositorio Github do projeto - https://github.com/fmatos23/projAS/
+Site: https://fmatos23.github.io/
 
 ## Criar conta e depois começar a utilizar o webstie. Espero que goste :)
