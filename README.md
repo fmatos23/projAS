@@ -11,4 +11,4 @@ Luís Pereira - 108770
 
 Site: https://fmatos23.github.io/
 
-## Criar conta e depois começar a utilizar o webstie. Espero que goste :)
+## Criar conta e depois começar a utilizar o website. Espero que goste :)
