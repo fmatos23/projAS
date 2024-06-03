@@ -24,27 +24,34 @@ document.getElementById("offerForm").addEventListener("submit", function(event) 
     const notes = document.getElementById("notes").value;
     const price = document.getElementById("price").value;
     const loanDuration = document.getElementById("loanDuration").value;
-    const image = document.getElementById("image").files[0];
+    const imageInput = document.getElementById("image").files[0];
 
-    const newOffer = {
-        instrument: instrument,
-        size: size,
-        material: material,
-        notes: notes,
-        price: price,
-        loanDuration: loanDuration,
-        image: URL.createObjectURL(image),
-        status: "available",
-        postedBy: `${storedProfile.firstName} ${storedProfile.lastName}`,
-        email: storedProfile.email
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const imageBase64 = e.target.result;
+        const newOffer = {
+            instrument: instrument,
+            size: size,
+            material: material,
+            notes: notes,
+            price: price,
+            loanDuration: loanDuration,
+            image: imageBase64,
+            status: "available",
+            postedBy: `${storedProfile.firstName} ${storedProfile.lastName}`,
+            contact: storedProfile.phone,
+            email: storedProfile.email
+        };
+
+        offers.push(newOffer);
+        saveOffers();
+        displayFilteredOffers(offers);
+
+        document.getElementById("offerForm").reset();
+        openTab(event, 'viewOffers');
     };
 
-    offers.push(newOffer);
-    saveOffers();
-    displayFilteredOffers(offers);
-
-    document.getElementById("offerForm").reset();
-    openTab(event, 'viewOffers');
+    reader.readAsDataURL(imageInput);
 });
 
 function openModal(instrument, size, material, notes, price, loanDuration, image) {
@@ -57,7 +64,7 @@ function openModal(instrument, size, material, notes, price, loanDuration, image
         <p><strong>Material:</strong> ${material}</p>
         <p><strong>Notes:</strong> ${notes}</p>
         <p><strong>Price:</strong> €${price}</p>
-        <p><strong>Loan Duration (weeks):</strong> ${loanDuration}</p>
+        <p><strong>Loan Duration (days):</strong> ${loanDuration}</p>
     `;
     modal.style.display = "block";
     const loanButtonModal = document.getElementById("loanButtonModal");
@@ -132,6 +139,26 @@ function displayFilteredOffers(filteredOffers) {
         const priceElem = document.createElement("p");
         priceElem.textContent = "€" + offer.price;
         div.appendChild(priceElem);
+
+        const materialElem = document.createElement("p");
+        materialElem.textContent = "Material: " + offer.material;
+        div.appendChild(materialElem);
+
+        const notesElem = document.createElement("p");
+        notesElem.textContent = "Description: " + offer.notes;
+        div.appendChild(notesElem);
+
+        const sizeElem = document.createElement("p");
+        sizeElem.textContent = "Size: " + offer.size;
+        div.appendChild(sizeElem);
+
+        const loanDurationElem = document.createElement("p");
+        loanDurationElem.textContent = "Loan Duration: " + offer.loanDuration + " days";
+        div.appendChild(loanDurationElem);
+
+        const postedBy = document.createElement("p");
+        postedBy.textContent = `Posted by: ${offer.postedBy} (${offer.contact})`;
+        div.appendChild(postedBy);
 
         const loanButton = document.createElement("button");
         loanButton.textContent = offer.status === "available" ? "Loan" : "Loaned";
